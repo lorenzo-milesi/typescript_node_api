@@ -11,8 +11,9 @@ const server = http.createServer((req, res) => {
         .parse(req.url, true)
         .pathname
         .replace(/^\/+|\/+$/g, '');
+    const method = req.method;
     res.end(path);
-    console.log('New request on: ' + path)
+    console.log(method + ' request on: ' + path);
 });
 
 server.listen(3000, () => console.log('Listening on port 3000'));
