@@ -1,6 +1,7 @@
 # TypeScript-Node.Js MicroAPI
 
 ## Getting Started 
+- Run `npm install`
 - Compile using `tsc`
 - Run `node` on `dist\index.js`
 
