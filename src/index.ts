@@ -1,30 +1,19 @@
 /*
  * Node.Js with TypeScript
  */
+import * as http from "http";
+import * as https from "https";
+import {serverLogic} from "./Core/ServerLogic";
+import env from "./config";
+import * as fs from 'fs';
 
-// Dependencies
-import {StringDecoder} from 'string_decoder';
-import {parse, UrlWithParsedQuery} from "url";
-import {createServer, IncomingHttpHeaders} from "http";
+http.createServer(serverLogic)
+    .listen(env.ports.http, () => console.log('Listening on ' + env.ports.http + ' in ' + env.name + ' mode'));
 
-const server = createServer((req, res) => {
-    // Endpoint, Query and HTTP Method
-    const url: UrlWithParsedQuery = parse(req.url, true);
-    const endpoint: string = url.pathname.replace(/^\/+|\/+$/g, '');
-    const query: Object = url.query;
-    const method: string = req.method;
+const httpsOptions = {
+    'key': fs.readFileSync('./https/key.pem'),
+    'cert': fs.readFileSync('./https/cert.pem')
+};
 
-    // Headers
-    const headers: IncomingHttpHeaders = req.headers;
-    const decoder: StringDecoder = new StringDecoder('utf-8');
-
-    let payload: string = '';
-    req.on('data', data => payload += decoder.write(data));
-
-    req.on('end', () => {
-        res.end(endpoint);
-        console.log(method + ' request on: ' + endpoint + ' with: ', query, headers, payload);
-    })
-});
-
-server.listen(3000, () => console.log('Listening on port 3000'));
+https.createServer(httpsOptions, serverLogic)
+    .listen(env.ports.https, () => console.log('Listening on ' + env.ports.https + ' in ' + env.name + ' mode'));
